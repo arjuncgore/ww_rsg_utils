@@ -31,7 +31,7 @@ M.setup       = function(config, cfg)
 
     waywall.listen("state", function()
         local state = waywall.state()
-        if state.screen == "generating" and not reset_enabled then
+        if state.screen == "generating" or state.screen == "wall" and not reset_enabled then
             reset_mode()
         end
     end)
