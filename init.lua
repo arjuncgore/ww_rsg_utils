@@ -32,10 +32,26 @@ M.setup       = function(config, cfg)
     local reset_mode = function()
         waywall.set_remaps(remaps_fast)
         reset_enabled = true
+        if cfg.text.enabled then
+            if text_obj then
+                text_obj:close()
+                text_obj = nil
+            end
+            text_obj = waywall.text(cfg.text.text, {
+                x = cfg.text.x,
+                y = cfg.text.y,
+                color = cfg.text.color,
+                size = cfg.text.size,
+            })
+        end
     end
     local normal_mode = function()
         waywall.set_remaps(remaps_normal)
         reset_enabled = false
+        if text_obj then
+            text_obj:close()
+            text_obj = nil
+        end
     end
 
 
@@ -44,28 +60,12 @@ M.setup       = function(config, cfg)
         if state.screen == "generating" or state.screen == "wall" and not reset_enabled then
             waywall.set_resolution(0, 0)
             reset_mode()
-            if cfg.text.enabled then
-                if text_obj then
-                    text_obj:close()
-                    text_obj = nil
-                end
-                text_obj = waywall.text(cfg.text.text, {
-                    x = cfg.text.x,
-                    y = cfg.text.y,
-                    color = cfg.text.color,
-                    size = cfg.text.size,
-                })
-            end
         end
     end)
 
     waywall.listen("resolution", function()
         local act_width, act_height = waywall.active_res()
         if act_width == cfg.thin_res.w and act_height == cfg.thin_res.h and reset_enabled then
-            if text_obj then
-                text_obj:close()
-                text_obj = nil
-            end
             normal_mode()
         end
     end)
