@@ -1,5 +1,5 @@
 -- ==== VARS ====
-local waywall = require("waywall")
+local waywall       = require("waywall")
 
 -- local cfg     = {
 --     fast_reset = "MB5",
@@ -15,12 +15,14 @@ local waywall = require("waywall")
 --     }
 -- }
 
-local M       = {}
+local M             = {}
+
+local remaps_normal = {}
+
 -- ==== PLUG ====
-M.setup       = function(config, cfg)
+M.setup             = function(config, cfg)
     local text_obj = nil
 
-    local remaps_normal = {}
     local remaps_fast = {}
     for key, val in pairs(config.input.remaps) do
         remaps_normal[key] = val
@@ -57,7 +59,7 @@ M.setup       = function(config, cfg)
 
     waywall.listen("state", function()
         local state = waywall.state()
-        if state.screen == "generating" or state.screen == "wall" and not reset_enabled then
+        if (state.screen == "generating" or state.screen == "wall") and not reset_enabled then
             waywall.set_resolution(0, 0)
             reset_mode()
         end
@@ -69,6 +71,10 @@ M.setup       = function(config, cfg)
             normal_mode()
         end
     end)
+end
+
+M.normal_remaps     = function()
+    return remaps_normal
 end
 
 return M
